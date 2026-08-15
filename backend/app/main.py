@@ -1,10 +1,18 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.routing import APIRoute
 
-from app.routers import bible
+from app.routers import bible, angels, saints
 
-app = FastAPI(title="Biblia API Vulgata")
-app.include_router(bible.router)
+
+def custom_generate_unique_id(route: APIRoute):
+    tag = route.tags[0] if route.tags else "geral"
+    return f"{tag}_{route.name}"
+
+
+app = FastAPI(
+    title="Biblia API Vulgata", generate_unique_id_function=custom_generate_unique_id
+)
 
 """Configuração do CORS para permitir requisições do frontend"""
 origins = [
@@ -21,6 +29,8 @@ app.add_middleware(
 )
 
 app.include_router(bible.router)
+app.include_router(angels.router)
+app.include_router(saints.router)
 
 
 @app.get("/")

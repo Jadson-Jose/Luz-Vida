@@ -51,7 +51,7 @@
       <nav class="links">
         <router-link to="/">Início</router-link>
         <router-link to="/livros">Livros</router-link>
-        <a href="#versiculo">Versículo</a>
+        <router-link to="/anjos">Anjos</router-link>
         <a href="#sobre">Sobre</a>
       </nav>
     </div>
