@@ -1,0 +1,11 @@
+--2026-06-30 14:32:28--  https://web.archive.org/web/20230601000000if_/https://raw.githubusercontent.com/thiagobodruk/biblia-sagrada-json/main/biblia_pt_br.json
+Resolvendo web.archive.org (web.archive.org)... 207.241.237.3
+Conectando-se a web.archive.org (web.archive.org)|207.241.237.3|:443... falha: Tempo esgotado para conexão.
+Tentando novamente.
+
+--2026-06-30 14:34:42--  (tentativa: 2)  https://web.archive.org/web/20230601000000if_/https://raw.githubusercontent.com/thiagobodruk/biblia-sagrada-json/main/biblia_pt_br.json
+Conectando-se a web.archive.org (web.archive.org)|207.241.237.3|:443... falha: Tempo esgotado para conexão.
+Tentando novamente.
+
+--2026-06-30 14:36:58--  (tentativa: 3)  https://web.archive.org/web/20230601000000if_/https://raw.githubusercontent.com/thiagobodruk/biblia-sagrada-json/main/biblia_pt_br.json
+Conectando-se a web.archive.org (web.archive.org)|207.241.237.3|:443... 

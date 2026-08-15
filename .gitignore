@@ -1,0 +1,69 @@
+# ================================
+# Geral
+# ================================
+.env
+.env.*
+!.env.example
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ================================
+# Python / FastAPI
+# ================================
+# Ambientes virtuais
+venv/
+.venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Dependências (opcional: mantenha requirements.txt versionado)
+# Se usar uv, pode ignorar o lock:
+uv.lock
+
+# ================================
+# Dados e importação (NÃO versionar datasets grandes)
+# ================================
+# Arquivos de dados bíblicos baixados
+vulgate.json
+vulgate.csv
+biblia_pt_br.json
+
+# Repositórios clonados/baixados
+bible_databases-master/
+biblia-sagrada-json-main/
+master.zip
+*.zip
+
+# Scripts de seed e importação (podem ser versionados, mas aqui ignoramos os de testes)
+seed_dummy.py
+import_vulgate.py
+import_vulgate_json.py
+
+# Backups de banco
+*.sql
+*.dump
+
+# ================================
+# Frontend Vue.js (futuro)
+# ================================
+node_modules/
+/dist/
+.nuxt/
+.output/
+.vite/
+
+# ================================
+# IDEs
+# ================================
+.vscode/
+.idea/
