@@ -666,6 +666,10 @@ section {
 }
 
 /* ---------- prayer / quote band ---------- */
+.quote-band-section {
+  padding: 0;
+  max-width: none;
+}
 .quote-band {
   background: linear-gradient(
     135deg,
