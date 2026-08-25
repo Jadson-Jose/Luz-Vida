@@ -52,6 +52,7 @@
         <router-link to="/">Início</router-link>
         <router-link to="/livros">Livros</router-link>
         <router-link to="/anjos">Anjos</router-link>
+        <router-link to="/admin/login">Admin</router-link>
         <a href="#sobre">Sobre</a>
       </nav>
     </div>

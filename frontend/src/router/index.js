@@ -5,6 +5,8 @@ import BookChaptersView from "../views/BookChaptersView.vue";
 import ChapterView from "../views/ChapterView.vue";
 import AngelsView from "../views/AngelsView.vue";
 import AngelDetailView from "../views/AngelDetailView.vue";
+import AdminLoginView from "../views/admin/AdminLoginView.vue";
+import AdminLayout from "../views/admin/AdminLayout.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,7 +17,47 @@ const router = createRouter({
     { path: "/capitulo/:id", name: "chapter", component: ChapterView },
     { path: "/anjos", name: "angels", component: AngelsView },
     { path: "/anjos/:id", name: "angel-detail", component: AngelDetailView },
+    { path: "/admin/login", name: "admin-login", component: AdminLoginView },
+    {
+      path: "/admin",
+      component: AdminLayout,
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: "",
+          name: "admin-dashboard",
+          component: { template: "<h1>Dashboard Admin</h1>" },
+        },
+        {
+          path: "livros",
+          name: "admin-books",
+          component: () => import("../views/admin/AdminBooksView.vue"),
+        },
+        {
+          path: "livros/:bookId/capitulos",
+          name: "admin-chapters",
+          component: () => import("../views/admin/AdminChaptersView.vue"),
+        },
+        {
+          path: "capitulos/:chapterId/versiculos",
+          name: "admin-verses",
+          component: () => import("../views/admin/AdminVersesView.vue"),
+        },
+      ],
+    },
   ],
+});
+
+// Guard global de autenticação
+router.beforeEach((to, from) => {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const token = localStorage.getItem("admin_token");
+
+  if (requiresAuth && !token) {
+    return { name: "admin-login", query: { redirect: to.fullPath } };
+  }
+  // Retornar true ou undefined é permitido
+  return true;
 });
 
 export default router;
