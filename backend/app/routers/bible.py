@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app import models, schemas
+from app.auth import require_admin
 from app.database import SessionLocal
 
 router = APIRouter(prefix="/api", tags=["bible"])
@@ -15,6 +16,7 @@ def get_db():
         db.close()
 
 
+# ---------- LIVROS ----------
 @router.get("/books", response_model=list[schemas.BookOut])
 def list_books(db: Session = Depends(get_db)):
     return db.query(models.Book).order_by(models.Book.id).all()
@@ -28,6 +30,47 @@ def get_book(book_id: int, db: Session = Depends(get_db)):
     return book
 
 
+@router.post(
+    "/books", response_model=schemas.BookOut, dependencies=[Depends(require_admin)]
+)
+def create_book(book: schemas.BookCreate, db: Session = Depends(get_db)):
+    db_book = models.Book(**book.dict())
+    db.add(db_book)
+    db.commit()
+    db.refresh(db_book)
+    return db_book
+
+
+@router.put(
+    "/books/{book_id}",
+    response_model=schemas.BookOut,
+    dependencies=[Depends(require_admin)],
+)
+def update_book(
+    book_id: int, updated: schemas.BookCreate, db: Session = Depends(get_db)
+):
+    book = db.query(models.Book).filter(models.Book.id == book_id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Livro não encontrado")
+    for key, value in updated.dict().items():
+        setattr(book, key, value)
+    db.commit()
+    db.refresh(book)
+    return book
+
+
+@router.delete(
+    "/books/{book_id}", status_code=204, dependencies=[Depends(require_admin)]
+)
+def delete_book(book_id: int, db: Session = Depends(get_db)):
+    book = db.query(models.Book).filter(models.Book.id == book_id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Livro não encontrado")
+    db.delete(book)
+    db.commit()
+
+
+# ---------- CAPÍTULOS ----------
 @router.get("/chapters/{chapter_id}", response_model=schemas.ChapterWithVerses)
 def get_chapter(chapter_id: int, db: Session = Depends(get_db)):
     chapter = db.query(models.Chapter).filter(models.Chapter.id == chapter_id).first()
@@ -36,9 +79,92 @@ def get_chapter(chapter_id: int, db: Session = Depends(get_db)):
     return chapter
 
 
+@router.post(
+    "/chapters",
+    response_model=schemas.ChapterOut,
+    dependencies=[Depends(require_admin)],
+)
+def create_chapter(chapter: schemas.ChapterCreate, db: Session = Depends(get_db)):
+    db_chapter = models.Chapter(**chapter.dict())
+    db.add(db_chapter)
+    db.commit()
+    db.refresh(db_chapter)
+    return db_chapter
+
+
+@router.put(
+    "/chapters/{chapter_id}",
+    response_model=schemas.ChapterOut,
+    dependencies=[Depends(require_admin)],
+)
+def update_chapter(
+    chapter_id: int, updated: schemas.ChapterCreate, db: Session = Depends(get_db)
+):
+    chapter = db.query(models.Chapter).filter(models.Chapter.id == chapter_id).first()
+    if not chapter:
+        raise HTTPException(status_code=404, detail="Capítulo não encontrado")
+    for key, value in updated.dict().items():
+        setattr(chapter, key, value)
+    db.commit()
+    db.refresh(chapter)
+    return chapter
+
+
+@router.delete(
+    "/chapters/{chapter_id}", status_code=204, dependencies=[Depends(require_admin)]
+)
+def delete_chapter(chapter_id: int, db: Session = Depends(get_db)):
+    chapter = db.query(models.Chapter).filter(models.Chapter.id == chapter_id).first()
+    if not chapter:
+        raise HTTPException(status_code=404, detail="Capítulo não encontrado")
+    db.delete(chapter)
+    db.commit()
+
+
+# ---------- VERSÍCULOS ----------
 @router.get("/verses/{verse_id}", response_model=schemas.VerseOut)
 def get_verse(verse_id: int, db: Session = Depends(get_db)):
     verse = db.query(models.Verse).filter(models.Verse.id == verse_id).first()
     if not verse:
         raise HTTPException(status_code=404, detail="Versículo não encontrado")
     return verse
+
+
+@router.post(
+    "/verses", response_model=schemas.VerseOut, dependencies=[Depends(require_admin)]
+)
+def create_verse(verse: schemas.VerseCreate, db: Session = Depends(get_db)):
+    db_verse = models.Verse(**verse.dict())
+    db.add(db_verse)
+    db.commit()
+    db.refresh(db_verse)
+    return db_verse
+
+
+@router.put(
+    "/verses/{verse_id}",
+    response_model=schemas.VerseOut,
+    dependencies=[Depends(require_admin)],
+)
+def update_verse(
+    verse_id: int, updated: schemas.VerseCreate, db: Session = Depends(get_db)
+):
+    verse = db.query(models.Verse).filter(models.Verse.id == verse_id).first()
+    if not verse:
+        raise HTTPException(status_code=404, detail="Versículo não encontrado")
+    for key, value in updated.dict().items():
+        setattr(verse, key, value)
+    db.commit()
+    db.refresh(verse)
+    return verse
+
+
+@router.delete(
+    "/verses/{verse_id}", status_code=204, dependencies=[Depends(require_admin)]
+)
+def delete_verse(verse_id: int, db: Session = Depends(get_db)):
+    verse = db.query(models.Verse).filter(models.Verse.id == verse_id).first()
+    if not verse:
+        raise HTTPException(status_code=404, detail="Versículo não encontrado")
+    db.delete(verse)
+    db.commit()

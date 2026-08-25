@@ -1,18 +1,22 @@
 from datetime import datetime
-from typing import Optional
 
-from pydantic import BaseModel
-from pydantic import ConfigDict
+from pydantic import BaseModel, ConfigDict
 
 
+# ========== Bíblia ==========
 class VerseOut(BaseModel):
     id: int
     number: int
     text: str
     chapter_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
+
+class VerseCreate(BaseModel):
+    number: int
+    text: str
+    chapter_id: int
 
 
 class ChapterOut(BaseModel):
@@ -20,8 +24,12 @@ class ChapterOut(BaseModel):
     number: int
     book_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ChapterCreate(BaseModel):
+    number: int
+    book_id: int
 
 
 class ChapterWithVerses(ChapterOut):
@@ -33,10 +41,19 @@ class BookOut(BaseModel):
     name: str
     abbreviation: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
+class BookCreate(BaseModel):
+    name: str
+    abbreviation: str
+
+
+class BookWithChapters(BookOut):
+    chapters: list[ChapterOut] = []
+
+
+# ========== Anjos ==========
 class AngelBase(BaseModel):
     name: str
     title: str
@@ -52,12 +69,12 @@ class AngelCreate(AngelBase):
 class AngelOut(AngelBase):
     id: int
     created_at: datetime
-    updated_at: Optional[datetime] = None
+    updated_at: datetime | None = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
+# ========== Santos ==========
 class SaintBase(BaseModel):
     name: str
     title: str | None = None
@@ -73,12 +90,7 @@ class SaintCreate(SaintBase):
 
 class SaintOut(SaintBase):
     id: int
-    create_at: datetime
-    update_at: datetime | None = None
+    created_at: datetime
+    updated_at: datetime | None = None
 
-    class Config:
-        from_attributes = True
-
-
-class BookWithChapters(BookOut):
-    chapters: list[ChapterOut] = []
+    model_config = ConfigDict(from_attributes=True)
