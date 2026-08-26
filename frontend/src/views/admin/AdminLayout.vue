@@ -6,6 +6,7 @@
         <router-link to="/admin">Dashboard</router-link>
         <router-link to="/admin/livros">Livros</router-link>
         <router-link to="/admin/anjos">Anjos</router-link>
+        <router-link to="/admin/santos">Santos</router-link>
         <button @click="logout">Sair</button>
       </nav>
     </aside>

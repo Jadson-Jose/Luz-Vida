@@ -7,6 +7,9 @@ import AngelsView from "../views/AngelsView.vue";
 import AngelDetailView from "../views/AngelDetailView.vue";
 import AdminLoginView from "../views/admin/AdminLoginView.vue";
 import AdminLayout from "../views/admin/AdminLayout.vue";
+import AdminDashboardView from "../views/admin/AdminDashboardView.vue";
+import SaintsView from "../views/SaintsView.vue";
+import SaintDetailView from "../views/SaintDetailView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,6 +21,8 @@ const router = createRouter({
     { path: "/anjos", name: "angels", component: AngelsView },
     { path: "/anjos/:id", name: "angel-detail", component: AngelDetailView },
     { path: "/admin/login", name: "admin-login", component: AdminLoginView },
+    { path: "/santos", name: "saints", component: SaintsView },
+    { path: "/santos/:id", name: "saint-detail", component: SaintDetailView },
     {
       path: "/admin",
       component: AdminLayout,
@@ -42,6 +47,21 @@ const router = createRouter({
           path: "capitulos/:chapterId/versiculos",
           name: "admin-verses",
           component: () => import("../views/admin/AdminVersesView.vue"),
+        },
+        {
+          path: "anjos",
+          name: "admin-angels",
+          component: () => import("../views/admin/AdminAngelsView.vue"),
+        },
+        {
+          path: "",
+          name: "admin-dashboard",
+          component: AdminDashboardView,
+        },
+        {
+          path: "santos",
+          name: "admin-saints",
+          component: () => import("../views/admin/AdminSaintsView.vue"),
         },
       ],
     },
