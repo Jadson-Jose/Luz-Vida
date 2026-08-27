@@ -5,7 +5,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
 from app.config import CORS_ORIGINS
-from app.routers import angels, auth, bible, saints
+from app.routers import angels, auth, bible, saints, stats
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -25,6 +25,7 @@ app.include_router(auth.router)
 app.include_router(bible.router)
 app.include_router(angels.router)
 app.include_router(saints.router)
+app.include_router(stats.router)
 
 
 @app.get("/")
