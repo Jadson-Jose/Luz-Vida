@@ -168,3 +168,29 @@ def delete_verse(verse_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Versículo não encontrado")
     db.delete(verse)
     db.commit()
+
+
+@router.get("/search", response_model=list[schemas.SearchResult])
+def search_verses(q: str, db: Session = Depends(get_db)):
+    pattern = f"%{q}%"
+    results = (
+        db.query(
+            models.Verse,
+            models.Book.name.label("book_name"),
+            models.Chapter.number.label("chapter_number"),
+        )
+        .join(models.Chapter, models.Verse.chapter_id == models.Chapter.id)
+        .join(models.Book, models.Chapter.book_id == models.Book.id)
+        .filter(models.Verse.text.ilike(pattern))
+        .limit(50)
+        .all()
+    )
+
+    return [
+        schemas.SearchResult(
+            verse=schemas.VerseOut.model_validate(verse),  # Pydantic v2
+            book_name=book_name,
+            chapter_number=chapter_number,
+        )
+        for verse, book_name, chapter_number in results
+    ]

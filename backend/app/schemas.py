@@ -94,3 +94,9 @@ class SaintOut(SaintBase):
     updated_at: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class SearchResult(BaseModel):
+    verse: VerseOut
+    book_name: str
+    chapter_number: int

@@ -4,20 +4,18 @@
       <span class="eyebrow">Acesso Restrito</span>
       <h1>Painel Administrativo</h1>
       <p class="login-description">
-        Digite o token de acesso para gerenciar os conteúdos da Bíblia e dos
-        Anjos.
+        Entre com suas credenciais para gerenciar os conteúdos.
       </p>
 
       <form @submit.prevent="handleLogin" class="login-form">
-        <label for="token">Token de Acesso</label>
-        <input
-          id="token"
-          v-model="token"
-          type="password"
-          placeholder="Digite o token"
-          autocomplete="current-password"
-          required
-        />
+        <div class="form-group">
+          <label for="username">Usuário</label>
+          <input id="username" v-model="username" type="text" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input id="password" v-model="password" type="password" required />
+        </div>
         <button type="submit" class="btn btn-primary" :disabled="loading">
           {{ loading ? "Verificando…" : "Entrar" }}
         </button>
@@ -32,34 +30,29 @@
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
-import api from "../../api/client";
 
 const router = useRouter();
 const route = useRoute();
 
-const token = ref("");
+const username = ref("");
+const password = ref("");
 const loading = ref(false);
 const error = ref("");
 
 async function handleLogin() {
-  await api.get("/angels");
   loading.value = true;
   error.value = "";
 
   try {
-    // Testa o token chamando uma rota protegida qualquer (ex.: listar anjos)
-    await axios.get("http://127.0.0.1:8000/api/angels", {
-      headers: { Authorization: `Bearer ${token.value}` },
+    const response = await axios.post("http://127.0.0.1:8000/api/auth/login", {
+      username: username.value,
+      password: password.value,
     });
-
-    // Se chegou aqui, o token é válido
-    localStorage.setItem("admin_token", token.value);
-
-    // Redireciona para a página que o usuário tentou acessar ou para o dashboard
+    localStorage.setItem("admin_token", response.data.access_token);
     const redirect = route.query.redirect || "/admin";
     router.push(redirect);
   } catch (err) {
-    error.value = "Token inválido. Verifique e tente novamente.";
+    error.value = "Usuário ou senha inválidos.";
   } finally {
     loading.value = false;
   }

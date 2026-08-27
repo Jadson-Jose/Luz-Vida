@@ -1,33 +1,27 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.routing import APIRoute
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 
-from app.routers import bible, angels, saints
+from app.config import CORS_ORIGINS
+from app.routers import angels, auth, bible, saints
 
+limiter = Limiter(key_func=get_remote_address)
 
-def custom_generate_unique_id(route: APIRoute):
-    tag = route.tags[0] if route.tags else "geral"
-    return f"{tag}_{route.name}"
-
-
-app = FastAPI(
-    title="Biblia API Vulgata", generate_unique_id_function=custom_generate_unique_id
-)
-
-"""Configuração do CORS para permitir requisições do frontend"""
-origins = [
-    "http://localhost:5173",  # endereço padrão do Vue/Vite
-    "http://127.0.0.1:5173",
-]
+app = FastAPI(title="Biblia API Vulgata")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(bible.router)
 app.include_router(angels.router)
 app.include_router(saints.router)
@@ -35,4 +29,4 @@ app.include_router(saints.router)
 
 @app.get("/")
 def root():
-    return {"message": "Biblia API Vulgata"}
+    return {"mensagem": "Biblia API Vulgata"}

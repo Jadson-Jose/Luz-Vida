@@ -24,15 +24,15 @@ const router = createRouter({
     { path: "/santos", name: "saints", component: SaintsView },
     { path: "/santos/:id", name: "saint-detail", component: SaintDetailView },
     {
+      path: "/busca",
+      name: "search",
+      component: () => import("../views/SearchView.vue"),
+    },
+    {
       path: "/admin",
       component: AdminLayout,
       meta: { requiresAuth: true },
       children: [
-        {
-          path: "",
-          name: "admin-dashboard",
-          component: { template: "<h1>Dashboard Admin</h1>" },
-        },
         {
           path: "livros",
           name: "admin-books",
