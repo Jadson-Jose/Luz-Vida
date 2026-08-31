@@ -35,40 +35,50 @@
 
     <div v-if="loading" class="loading">Carregando…</div>
     <div v-else-if="error" class="error">{{ error }}</div>
-    <table v-else class="admin-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Número</th>
-          <th>Texto</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="verse in verses" :key="verse.id">
-          <td>{{ verse.id }}</td>
-          <td>{{ verse.number }}</td>
-          <td class="verse-text-preview">{{ verse.text }}</td>
-          <td>
-            <button class="btn-link" @click="editVerse(verse)">Editar</button>
-            <button class="btn-link danger" @click="deleteVerse(verse.id)">
-              Excluir
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <template v-else>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Número</th>
+            <th>Texto</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="verse in verses" :key="verse.id">
+            <td>{{ verse.id }}</td>
+            <td>{{ verse.number }}</td>
+            <td class="verse-text-preview">{{ verse.text }}</td>
+            <td>
+              <button class="btn-link" @click="editVerse(verse)">Editar</button>
+              <button class="btn-link danger" @click="deleteVerse(verse.id)">
+                Excluir
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <PaginationBar
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @change-page="changePage"
+      />
+    </template>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import api from "../../api/client";
+import PaginationBar from "../../components/PaginationBar.vue";
 
 const route = useRoute();
 const chapterId = route.params.chapterId;
-const bookId = ref(null); // será obtido do capítulo
+const bookId = ref(null);
+
 const verses = ref([]);
 const loading = ref(true);
 const error = ref("");
@@ -76,17 +86,38 @@ const showForm = ref(false);
 const editingVerse = ref(null);
 const form = ref({ number: 1, text: "" });
 
+// Paginação
+const currentPage = ref(1);
+const pageSize = 10;
+const totalItems = ref(0);
+const totalPages = computed(() => Math.ceil(totalItems.value / pageSize));
+
 async function fetchVerses() {
   loading.value = true;
+  error.value = "";
   try {
-    const response = await api.get(`/chapters/${chapterId}`);
-    verses.value = response.data.verses;
-    bookId.value = response.data.book_id;
+    const response = await api.get(`/chapters/${chapterId}/verses`, {
+      params: {
+        skip: (currentPage.value - 1) * pageSize,
+        limit: pageSize,
+      },
+    });
+    verses.value = response.data;
+    totalItems.value = parseInt(response.headers["x-total-count"] || "0");
+    // Obter book_id para botão voltar
+    // Como a resposta é uma lista, precisamos buscar o capítulo separadamente
+    const chapterResponse = await api.get(`/chapters/${chapterId}`);
+    bookId.value = chapterResponse.data.book_id;
   } catch (err) {
     error.value = "Erro ao carregar versículos.";
   } finally {
     loading.value = false;
   }
+}
+
+function changePage(page) {
+  currentPage.value = page;
+  fetchVerses();
 }
 
 function openCreateForm() {

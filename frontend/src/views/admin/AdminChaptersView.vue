@@ -28,44 +28,60 @@
 
     <div v-if="loading" class="loading">Carregando…</div>
     <div v-else-if="error" class="error">{{ error }}</div>
-    <table v-else class="admin-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Número</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="chapter in chapters" :key="chapter.id">
-          <td>{{ chapter.id }}</td>
-          <td>{{ chapter.number }}</td>
-          <td>
-            <button class="btn-link" @click="editChapter(chapter)">
-              Editar
-            </button>
-            <button class="btn-link danger" @click="deleteChapter(chapter.id)">
-              Excluir
-            </button>
-            <router-link
-              :to="{ name: 'admin-verses', params: { chapterId: chapter.id } }"
-              class="btn-link"
-              >Versículos</router-link
-            >
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <template v-else>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Número</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="chapter in chapters" :key="chapter.id">
+            <td>{{ chapter.id }}</td>
+            <td>{{ chapter.number }}</td>
+            <td>
+              <button class="btn-link" @click="editChapter(chapter)">
+                Editar
+              </button>
+              <button
+                class="btn-link danger"
+                @click="deleteChapter(chapter.id)"
+              >
+                Excluir
+              </button>
+              <router-link
+                :to="{
+                  name: 'admin-verses',
+                  params: { chapterId: chapter.id },
+                }"
+                class="btn-link"
+                >Versículos</router-link
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <PaginationBar
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @change-page="changePage"
+      />
+    </template>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import api from "../../api/client";
+import PaginationBar from "../../components/PaginationBar.vue";
 
 const route = useRoute();
 const bookId = route.params.bookId;
+
 const chapters = ref([]);
 const loading = ref(true);
 const error = ref("");
@@ -73,16 +89,34 @@ const showForm = ref(false);
 const editingChapter = ref(null);
 const form = ref({ number: 1 });
 
+// Paginação
+const currentPage = ref(1);
+const pageSize = 10;
+const totalItems = ref(0);
+const totalPages = computed(() => Math.ceil(totalItems.value / pageSize));
+
 async function fetchChapters() {
   loading.value = true;
+  error.value = "";
   try {
-    const response = await api.get(`/books/${bookId}`);
-    chapters.value = response.data.chapters;
+    const response = await api.get(`/books/${bookId}/chapters`, {
+      params: {
+        skip: (currentPage.value - 1) * pageSize,
+        limit: pageSize,
+      },
+    });
+    chapters.value = response.data;
+    totalItems.value = parseInt(response.headers["x-total-count"] || "0");
   } catch (err) {
     error.value = "Erro ao carregar capítulos.";
   } finally {
     loading.value = false;
   }
+}
+
+function changePage(page) {
+  currentPage.value = page;
+  fetchChapters();
 }
 
 function openCreateForm() {

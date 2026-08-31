@@ -31,41 +31,51 @@
     <!-- Lista de livros -->
     <div v-if="loading" class="loading">Carregando…</div>
     <div v-else-if="error" class="error">{{ error }}</div>
-    <table v-else class="admin-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nome</th>
-          <th>Abreviação</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="book in books" :key="book.id">
-          <td>{{ book.id }}</td>
-          <td>{{ book.name }}</td>
-          <td>{{ book.abbreviation }}</td>
-          <td>
-            <button class="btn-link" @click="editBook(book)">Editar</button>
-            <button class="btn-link danger" @click="deleteBook(book.id)">
-              Excluir
-            </button>
-            <router-link
-              :to="{ name: 'admin-chapters', params: { bookId: book.id } }"
-              class="btn-link"
-            >
-              Capítulos
-            </router-link>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <template v-else>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Abreviação</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="book in books" :key="book.id">
+            <td>{{ book.id }}</td>
+            <td>{{ book.name }}</td>
+            <td>{{ book.abbreviation }}</td>
+            <td>
+              <button class="btn-link" @click="editBook(book)">Editar</button>
+              <button class="btn-link danger" @click="deleteBook(book.id)">
+                Excluir
+              </button>
+              <router-link
+                :to="{ name: 'admin-chapters', params: { bookId: book.id } }"
+                class="btn-link"
+              >
+                Capítulos
+              </router-link>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Paginação -->
+      <PaginationBar
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @change-page="changePage"
+      />
+    </template>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import api from "../../api/client";
+import PaginationBar from "../../components/PaginationBar.vue";
 
 const books = ref([]);
 const loading = ref(true);
@@ -77,17 +87,34 @@ const form = ref({
   abbreviation: "",
 });
 
+// Paginação
+const currentPage = ref(1);
+const pageSize = 10;
+const totalItems = ref(0);
+const totalPages = computed(() => Math.ceil(totalItems.value / pageSize));
+
 async function fetchBooks() {
   loading.value = true;
   error.value = "";
   try {
-    const response = await api.get("/books");
+    const response = await api.get("/books", {
+      params: {
+        skip: (currentPage.value - 1) * pageSize,
+        limit: pageSize,
+      },
+    });
     books.value = response.data;
+    totalItems.value = parseInt(response.headers["x-total-count"] || "0");
   } catch (err) {
     error.value = "Erro ao carregar livros.";
   } finally {
     loading.value = false;
   }
+}
+
+function changePage(page) {
+  currentPage.value = page;
+  fetchBooks();
 }
 
 function openCreateForm() {

@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 
 from app import models, schemas
 from app.auth import require_admin
 from app.database import SessionLocal
+from app.utils.pagination import apply_pagination
 
 router = APIRouter(prefix="/api", tags=["bible"])
 
@@ -18,8 +19,18 @@ def get_db():
 
 # ---------- LIVROS ----------
 @router.get("/books", response_model=list[schemas.BookOut])
-def list_books(db: Session = Depends(get_db)):
-    return db.query(models.Book).order_by(models.Book.id).all()
+def list_books(
+    response: Response,
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    total = db.query(models.Book).count()
+    books = (
+        db.query(models.Book).order_by(models.Book.id).offset(skip).limit(limit).all()
+    )
+    apply_pagination(response, skip, limit, total)
+    return books
 
 
 @router.get("/books/{book_id}", response_model=schemas.BookWithChapters)
@@ -31,7 +42,9 @@ def get_book(book_id: int, db: Session = Depends(get_db)):
 
 
 @router.post(
-    "/books", response_model=schemas.BookOut, dependencies=[Depends(require_admin)]
+    "/books",
+    response_model=schemas.BookOut,
+    dependencies=[Depends(require_admin)],
 )
 def create_book(book: schemas.BookCreate, db: Session = Depends(get_db)):
     db_book = models.Book(**book.dict())
@@ -77,6 +90,27 @@ def get_chapter(chapter_id: int, db: Session = Depends(get_db)):
     if not chapter:
         raise HTTPException(status_code=404, detail="Capítulo não encontrado")
     return chapter
+
+
+@router.get("/books/{book_id}/chapters", response_model=list[schemas.ChapterOut])
+def list_chapters_by_book(
+    book_id: int,
+    response: Response,
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    total = db.query(models.Chapter).filter(models.Chapter.book_id == book_id).count()
+    chapters = (
+        db.query(models.Chapter)
+        .filter(models.Chapter.book_id == book_id)
+        .order_by(models.Chapter.number)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+    apply_pagination(response, skip, limit, total)
+    return chapters
 
 
 @router.post(
@@ -130,8 +164,31 @@ def get_verse(verse_id: int, db: Session = Depends(get_db)):
     return verse
 
 
+@router.get("/chapters/{chapter_id}/verses", response_model=list[schemas.VerseOut])
+def list_verses_by_chapter(
+    chapter_id: int,
+    response: Response,
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    total = db.query(models.Verse).filter(models.Verse.chapter_id == chapter_id).count()
+    verses = (
+        db.query(models.Verse)
+        .filter(models.Verse.chapter_id == chapter_id)
+        .order_by(models.Verse.number)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+    apply_pagination(response, skip, limit, total)
+    return verses
+
+
 @router.post(
-    "/verses", response_model=schemas.VerseOut, dependencies=[Depends(require_admin)]
+    "/verses",
+    response_model=schemas.VerseOut,
+    dependencies=[Depends(require_admin)],
 )
 def create_verse(verse: schemas.VerseCreate, db: Session = Depends(get_db)):
     db_verse = models.Verse(**verse.dict())
@@ -170,6 +227,7 @@ def delete_verse(verse_id: int, db: Session = Depends(get_db)):
     db.commit()
 
 
+# ---------- BUSCA ----------
 @router.get("/search", response_model=list[schemas.SearchResult])
 def search_verses(q: str, db: Session = Depends(get_db)):
     pattern = f"%{q}%"
@@ -188,7 +246,7 @@ def search_verses(q: str, db: Session = Depends(get_db)):
 
     return [
         schemas.SearchResult(
-            verse=schemas.VerseOut.model_validate(verse),  # Pydantic v2
+            verse=schemas.VerseOut.model_validate(verse),
             book_name=book_name,
             chapter_number=chapter_number,
         )
