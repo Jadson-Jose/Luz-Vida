@@ -54,7 +54,7 @@ async function fetchSaint() {
   error.value = "";
   try {
     const response = await axios.get(
-      `http://127.0.0.1:8000/api/saints/${route.params.id}`,
+      `import.meta.env.VITE_API_URL/saints/${route.params.id}`,
     );
     saint.value = response.data;
   } catch (err) {

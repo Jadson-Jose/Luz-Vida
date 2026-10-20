@@ -48,7 +48,7 @@ const filteredBooks = computed(() => {
 
 async function fetchBooks() {
   try {
-    const response = await axios.get("http://127.0.0.1:8000/api/books");
+    const response = await axios.get("import.meta.env.VITE_API_URL/books");
     books.value = response.data;
   } catch (err) {
     console.error(err);

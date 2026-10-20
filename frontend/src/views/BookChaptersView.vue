@@ -32,7 +32,7 @@ const loading = ref(true);
 async function fetchBook() {
   try {
     const response = await axios.get(
-      `http://127.0.0.1:8000/api/books/${route.params.id}`,
+      `import.meta.env.VITE_API_URL/books/${route.params.id}`,
     );
     bookName.value = response.data.name;
     chapters.value = response.data.chapters;

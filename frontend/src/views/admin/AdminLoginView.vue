@@ -44,7 +44,7 @@ async function handleLogin() {
   error.value = "";
 
   try {
-    const response = await axios.post("http://127.0.0.1:8000/api/auth/login", {
+    const response = await axios.post("import.meta.env.VITE_API_URL/auth/login", {
       username: username.value,
       password: password.value,
     });

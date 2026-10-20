@@ -38,7 +38,7 @@ async function fetchChapter() {
   error.value = "";
   try {
     const response = await axios.get(
-      `http://127.0.0.1:8000/api/chapters/${route.params.id}`,
+      `import.meta.env.VITE_API_URL/chapters/${route.params.id}`,
     );
     chapterNumber.value = response.data.number;
     verses.value = response.data.verses;

@@ -41,7 +41,7 @@ const error = ref("");
 
 async function fetchAngels() {
   try {
-    const response = await axios.get("http://127.0.0.1:8000/api/angels");
+    const response = await axios.get("import.meta.env.VITE_API_URL/angels");
     angels.value = response.data;
   } catch (err) {
     error.value = "Erro ao carregar os anjos.";
