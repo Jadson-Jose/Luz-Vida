@@ -211,13 +211,36 @@ input:focus-visible {
   .nav-wrap {
     flex-direction: column;
     align-items: stretch;
+    padding: 10px 15px;
+    gap: 12px;
   }
+  
+  .brand {
+    justify-content: center;
+  }
+
   .search-form {
+    flex: none; /* Remove o flex que está esticando */
     min-width: 100%;
+    height: 48px; /* Altura fixa e confortável para dedos */
+    padding: 4px 4px 4px 16px;
+    margin: 0 auto;
   }
+  
+  .search-form input {
+    font-size: 0.95rem;
+  }
+
+  .search-form button {
+    width: 34px;
+    height: 34px;
+  }
+
   nav.links {
     justify-content: center;
     flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.75rem;
   }
 }
 </style>
