@@ -17,7 +17,7 @@ import AngelsSection from "../components/AngelsSection.vue";
 import BookGrid from "../components/BookGrid.vue";
 import HeroSection from "../components/HeroSection.vue"; // ← adicionar
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import api from "../api/client";
 
 const books = ref([]);
 const loading = ref(false);
@@ -27,7 +27,7 @@ async function fetchBooks() {
   loading.value = true;
   error.value = "";
   try {
-    const response = await axios.get("import.meta.env.VITE_API_URL/books");
+    const response = await api.get("books");
     books.value = response.data;
   } catch (err) {
     error.value =

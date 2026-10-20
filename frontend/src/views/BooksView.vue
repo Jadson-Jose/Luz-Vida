@@ -24,14 +24,13 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import api from "../api/client"; // <-- Importa a nossa instância
 
 const route = useRoute();
 const books = ref([]);
 const loading = ref(true);
 const searchQuery = ref("");
 
-// Observa o query param "search" vindo do header
 watch(
   () => route.query.search,
   (newVal) => {
@@ -48,7 +47,7 @@ const filteredBooks = computed(() => {
 
 async function fetchBooks() {
   try {
-    const response = await axios.get("import.meta.env.VITE_API_URL/books");
+    const response = await api.get("books"); // <-- Forma correta
     books.value = response.data;
   } catch (err) {
     console.error(err);

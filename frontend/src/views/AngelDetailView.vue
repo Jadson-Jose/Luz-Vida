@@ -32,7 +32,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import api from "../api/client";
 import { iconMap } from "../utils/iconMap";
 
 const route = useRoute();
@@ -44,9 +44,8 @@ async function fetchAngel() {
   loading.value = true;
   error.value = "";
   try {
-    const response = await axios.get(
-      `import.meta.env.VITE_API_URL/angels/${route.params.id}`,
-    );
+    // CORREÇÃO AQUI: usa 'api' e template string normal
+    const response = await api.get(`angels/${route.params.id}`);
     angel.value = response.data;
   } catch (err) {
     error.value = "Erro ao carregar o anjo. Verifique se a API está rodando.";

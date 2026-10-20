@@ -20,7 +20,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import api from "../api/client";
 import SaintCard from "../components/SaintCard.vue";
 
 const saints = ref([]);
@@ -31,7 +31,7 @@ async function fetchSaints() {
   loading.value = true;
   error.value = "";
   try {
-    const response = await axios.get("import.meta.env.VITE_API_URL/saints");
+    const response = await api.get("saints");
     saints.value = response.data;
   } catch (err) {
     error.value = "Erro ao carregar os santos.";

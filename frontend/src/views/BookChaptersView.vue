@@ -22,7 +22,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import api from "../api/client"; // <-- Importando a instância correta
 
 const route = useRoute();
 const chapters = ref([]);
@@ -31,9 +31,8 @@ const loading = ref(true);
 
 async function fetchBook() {
   try {
-    const response = await axios.get(
-      `import.meta.env.VITE_API_URL/books/${route.params.id}`,
-    );
+    // CORREÇÃO AQUI: usa 'api' e template string normal
+    const response = await api.get(`books/${route.params.id}`);
     bookName.value = response.data.name;
     chapters.value = response.data.chapters;
   } catch (err) {

@@ -32,7 +32,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import api from "../api/client";
 import { iconMap } from "../utils/iconMap";
 
 const angels = ref([]);
@@ -41,7 +41,7 @@ const error = ref("");
 
 async function fetchAngels() {
   try {
-    const response = await axios.get("import.meta.env.VITE_API_URL/angels");
+    const response = await api.get("angels");
     angels.value = response.data;
   } catch (err) {
     error.value = "Erro ao carregar os anjos.";

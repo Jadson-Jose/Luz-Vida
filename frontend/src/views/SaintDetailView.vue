@@ -42,7 +42,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import api from "../api/client";
 
 const route = useRoute();
 const saint = ref(null);
@@ -53,9 +53,8 @@ async function fetchSaint() {
   loading.value = true;
   error.value = "";
   try {
-    const response = await axios.get(
-      `import.meta.env.VITE_API_URL/saints/${route.params.id}`,
-    );
+    // CORREÇÃO AQUI
+    const response = await api.get(`saints/${route.params.id}`);
     saint.value = response.data;
   } catch (err) {
     error.value = "Erro ao carregar o santo.";

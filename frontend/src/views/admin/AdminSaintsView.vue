@@ -115,7 +115,7 @@ async function fetchSaints() {
   loading.value = true;
   error.value = "";
   try {
-    const response = await api.get("/saints");
+    const response = await api.get("saints");
     saints.value = response.data;
   } catch (err) {
     error.value = "Erro ao carregar santos.";

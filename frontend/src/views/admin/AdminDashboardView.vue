@@ -48,7 +48,7 @@ async function fetchStats() {
   loading.value = true;
   error.value = "";
   try {
-    const response = await api.get("/stats");
+    const response = await api.get("stats");
     stats.value = response.data;
   } catch (err) {
     error.value = "Erro ao carregar estatísticas.";

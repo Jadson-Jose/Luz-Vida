@@ -97,7 +97,7 @@ async function fetchBooks() {
   loading.value = true;
   error.value = "";
   try {
-    const response = await api.get("/books", {
+    const response = await api.get("books", {
       params: {
         skip: (currentPage.value - 1) * pageSize,
         limit: pageSize,

@@ -37,7 +37,7 @@
 <script setup>
 import { ref, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import api from "../api/client";
 
 const route = useRoute();
 const query = ref(route.query.q || "");
@@ -51,7 +51,7 @@ async function performSearch() {
   loading.value = true;
   error.value = "";
   try {
-    const response = await axios.get("import.meta.env.VITE_API_URL/search", {
+    const response = await api.get("search", {
       params: { q: query.value },
     });
     results.value = response.data;

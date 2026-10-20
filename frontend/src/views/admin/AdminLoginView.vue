@@ -29,7 +29,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import axios from "axios";
+import api from "../../api/client"; // <-- Caminho correto para a pasta admin
 
 const router = useRouter();
 const route = useRoute();
@@ -44,7 +44,8 @@ async function handleLogin() {
   error.value = "";
 
   try {
-    const response = await axios.post("import.meta.env.VITE_API_URL/auth/login", {
+    // CORREÇÃO AQUI: usa 'api' e o caminho relativo 'auth/login'
+    const response = await api.post("auth/login", {
       username: username.value,
       password: password.value,
     });
@@ -60,6 +61,7 @@ async function handleLogin() {
 </script>
 
 <style scoped>
+/* ... (mantenha os estilos originais aqui) ... */
 .admin-login {
   min-height: 80vh;
   display: flex;
@@ -67,7 +69,6 @@ async function handleLogin() {
   justify-content: center;
   padding: 2rem;
 }
-
 .login-card {
   max-width: 420px;
   width: 100%;
@@ -78,25 +79,21 @@ async function handleLogin() {
   text-align: center;
   box-shadow: var(--shadow);
 }
-
 .login-card h1 {
   margin: 0.5rem 0 1rem;
   font-size: 2rem;
 }
-
 .login-description {
   color: var(--ink-soft);
   margin-bottom: 2rem;
   font-size: 1rem;
 }
-
 .login-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   text-align: left;
 }
-
 .login-form label {
   font-family: "Cinzel", serif;
   font-size: 0.75rem;
@@ -104,7 +101,6 @@ async function handleLogin() {
   text-transform: uppercase;
   color: var(--blue-deep);
 }
-
 .login-form input {
   padding: 0.75rem 1rem;
   font-size: 1rem;
@@ -113,13 +109,11 @@ async function handleLogin() {
   background: var(--parchment);
   color: var(--ink);
 }
-
 .login-form input:focus {
   outline: none;
   border-color: var(--gold);
   box-shadow: 0 0 0 2px rgba(184, 137, 43, 0.2);
 }
-
 .error-message {
   color: var(--wine);
   margin-top: 1rem;

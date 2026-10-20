@@ -108,7 +108,7 @@ async function fetchAngels() {
   loading.value = true;
   error.value = "";
   try {
-    const response = await api.get("/angels");
+    const response = await api.get("angels");
     angels.value = response.data;
   } catch (err) {
     error.value = "Erro ao carregar anjos.";
