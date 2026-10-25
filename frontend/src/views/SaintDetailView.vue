@@ -102,6 +102,7 @@ onMounted(fetchSaint);
   max-width: 700px;
   font-size: 1.1rem;
   line-height: 1.7;
+  white-space: pre-line;
 }
 .short-text {
   font-style: italic;
