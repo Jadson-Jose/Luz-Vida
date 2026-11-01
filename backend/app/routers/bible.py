@@ -252,3 +252,49 @@ def search_verses(q: str, db: Session = Depends(get_db)):
         )
         for verse, book_name, chapter_number in results
     ]
+
+@router.get("/chapters/{chapter_id}/navigation")
+def get_chapter_navigation(chapter_id: int, db: Session = Depends(get_db)):
+    # 1. Encontra o capítulo atual
+    current_chapter = db.query(models.Chapter).filter(models.Chapter.id == chapter_id).first()
+    if not current_chapter:
+        raise HTTPException(status_code=404, detail="Capítulo não encontrado")
+
+    # 2. Encontra o livro atual
+    current_book = db.query(models.Book).filter(models.Book.id == current_chapter.book_id).first()
+
+    # 3. Encontra o capítulo anterior (mesmo livro)
+    prev_chapter = db.query(models.Chapter).filter(
+        models.Chapter.book_id == current_book.id,
+        models.Chapter.number < current_chapter.number
+    ).order_by(models.Chapter.number.desc()).first()
+
+    # 4. Encontra o capítulo seguinte (mesmo livro)
+    next_chapter = db.query(models.Chapter).filter(
+        models.Chapter.book_id == current_book.id,
+        models.Chapter.number > current_chapter.number
+    ).order_by(models.Chapter.number.asc()).first()
+
+    # 5. Se não houver próximo no mesmo livro, tenta o primeiro capítulo do próximo livro
+    if not next_chapter:
+        next_book = db.query(models.Book).filter(models.Book.id > current_book.id).order_by(models.Book.id).first()
+        if next_book:
+            next_chapter = db.query(models.Chapter).filter(
+                models.Chapter.book_id == next_book.id,
+                models.Chapter.number == 1
+            ).first()
+
+    # 6. Se não houver anterior no mesmo livro, tenta o último capítulo do livro anterior
+    if not prev_chapter:
+        prev_book = db.query(models.Book).filter(models.Book.id < current_book.id).order_by(models.Book.id.desc()).first()
+        if prev_book:
+            prev_chapter = db.query(models.Chapter).filter(
+                models.Chapter.book_id == prev_book.id
+            ).order_by(models.Chapter.number.desc()).first()
+
+    return {
+        "prev_id": prev_chapter.id if prev_chapter else None,
+        "next_id": next_chapter.id if next_chapter else None,
+        "book_name": current_book.name,
+        "chapter_number": current_chapter.number
+    }
