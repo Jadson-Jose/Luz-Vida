@@ -9,7 +9,19 @@
     </div>
 
     <VerseCard />
-    <BookGrid :books="books" :loading="loading" :error="error" />
+
+    <!-- Seção de destaque para a Bíblia, mas SEM a grade pesada -->
+    <section class="section home-bible-cta">
+      <div class="section-head" v-reveal>
+        <span class="eyebrow">Palavra de Deus</span>
+        <h2>Explore a Bíblia Sagrada</h2>
+        <p>Navegue por todos os livros, capítulos e versículos da Bíblia Católica.</p>
+      </div>
+      <div style="text-align: center; margin-top: 2rem;">
+        <router-link to="/livros" class="btn btn-primary">Acessar todos os Livros</router-link>
+      </div>
+    </section>
+
     <AngelsSection />
     <HistorySection />
   </div>
@@ -21,32 +33,11 @@ import PrayerBand from "../components/PrayerBand.vue";
 import HistorySection from "../components/HistorySection.vue";
 import VerseCard from "../components/VerseCard.vue";
 import AngelsSection from "../components/AngelsSection.vue";
-import BookGrid from "../components/BookGrid.vue";
 import HeroSection from "../components/HeroSection.vue";
-import { ref, onMounted } from "vue";
-import api from "../api/client";
-
-const books = ref([]);
-const loading = ref(false);
-const error = ref("");
+import { ref } from "vue";
 
 // Pega o ID do último capítulo lido do localStorage
 const lastReadChapter = ref(localStorage.getItem('last_read_chapter'));
-
-async function fetchBooks() {
-  loading.value = true;
-  error.value = "";
-  try {
-    const response = await api.get("books");
-    books.value = response.data;
-  } catch (err) {
-    error.value = "Erro ao carregar os livros. Verifique se a API está rodando.";
-  } finally {
-    loading.value = false;
-  }
-}
-
-onMounted(fetchBooks);
 </script>
 
 <style scoped>
@@ -74,5 +65,9 @@ onMounted(fetchBooks);
 .btn-continue:hover {
   background: var(--wine);
   transform: translateY(-2px);
+}
+
+.home-bible-cta {
+  text-align: center;
 }
 </style>
