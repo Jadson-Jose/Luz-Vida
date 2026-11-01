@@ -31,7 +31,6 @@
       <p v-for="verse in verses" :key="verse.id" class="verse">
         <sup class="verse-number">{{ verse.number }}</sup> {{ verse.text }}
         
-        <!-- Botão de compartilhar versículo -->
         <button class="share-btn" @click="shareVerse(verse)" title="Copiar versículo">🔗</button>
       </p>
     </div>
@@ -67,6 +66,13 @@ const fontSize = ref(parseFloat(localStorage.getItem('reader-font-size')) || 1.2
 const toggleDarkMode = () => {
   isDarkMode.value = !isDarkMode.value;
   localStorage.setItem('reader-theme', isDarkMode.value ? 'dark' : 'light');
+  
+  // CORREÇÃO: Aplica a cor no fundo da página inteira
+  if (isDarkMode.value) {
+    document.body.classList.add('dark-theme-bg');
+  } else {
+    document.body.classList.remove('dark-theme-bg');
+  }
 };
 
 const increaseFont = () => {
@@ -87,7 +93,6 @@ async function fetchChapter() {
   loading.value = true;
   error.value = "";
   try {
-    // Busca o capítulo e a navegação em paralelo
     const [chapterRes, navRes] = await Promise.all([
       api.get(`chapters/${route.params.id}`),
       api.get(`chapters/${route.params.id}/navigation`)
@@ -114,10 +119,15 @@ const shareVerse = (verse) => {
   alert("Versículo copiado para a área de transferência!");
 };
 
-// Escuta mudanças de rota (para quando clicar em "Próximo")
 watch(() => route.params.id, fetchChapter);
 
-onMounted(fetchChapter);
+onMounted(() => {
+  fetchChapter();
+  // Mantém o tema escuro no fundo se o usuário recarregar a página
+  if (isDarkMode.value) {
+    document.body.classList.add('dark-theme-bg');
+  }
+});
 </script>
 
 <style scoped>
@@ -182,7 +192,10 @@ onMounted(fetchChapter);
 .nav-buttons {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
   margin: 2rem 0;
+  width: 100%;
 }
 .btn-nav {
   text-decoration: none;
@@ -190,13 +203,26 @@ onMounted(fetchChapter);
   font-family: 'Cinzel', serif;
   font-size: 0.85rem;
   text-transform: uppercase;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--parchment-line);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.btn-nav:hover {
+  background: var(--parchment-deep);
 }
 .dark-mode .btn-nav {
   color: #d4af37;
+  border-color: #555;
+}
+.dark-mode .btn-nav:hover {
+  background: #333;
 }
 .btn-nav.disabled {
   color: #999;
   cursor: not-allowed;
+  border-color: transparent;
 }
 
 /* Versículos */
@@ -217,7 +243,7 @@ onMounted(fetchChapter);
   color: #d4af37;
 }
 
-/* Botão de Copiar (Aparece ao passar o mouse) */
+/* Botão de Copiar */
 .share-btn {
   background: none;
   border: none;
@@ -229,5 +255,12 @@ onMounted(fetchChapter);
 }
 .verse:hover .share-btn {
   opacity: 1;
+}
+</style>
+
+<!-- Estilo Global para o Fundo Escuro -->
+<style>
+.dark-theme-bg {
+  background-color: #1a1a1a !important;
 }
 </style>
