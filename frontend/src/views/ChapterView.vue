@@ -102,6 +102,14 @@ async function fetchChapter() {
     bookName.value = navRes.data.book_name;
     prevId.value = navRes.data.prev_id;
     nextId.value = navRes.data.next_id;
+    localStorage.setItem('last_read_chapter', route.params.id);
+    verses.value = chapterRes.data.verses;
+    bookId.value = chapterRes.data.book_id;
+
+    chapterNumber.value = navRes.data.chapter_number;
+    bookName.value = navRes.data.book_name;
+    prevId.value = navRes.data.prev_id;
+    nextId.value = navRes.data.next_id;
     
     verses.value = chapterRes.data.verses;
     bookId.value = chapterRes.data.book_id;
