@@ -1,6 +1,6 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import relationship
-
+from sqlalchemy import Column, Integer, String, Text, Date
 from app.database import Base
 
 
@@ -61,3 +61,16 @@ class Saint(Base):
     feast_day = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+class DailyReading(Base):
+    __tablename__ = "daily_readings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    date = Column(Date, unique=True, nullable=False, index=True) # A data da liturgia
+    liturgical_color = Column(String, nullable=True)  # Ex: Verde, Vermelho, Roxo, Branco
+    liturgical_season = Column(String, nullable=True) # Ex: Tempo Comum, Quaresma, Advento
+    first_reading = Column(Text, nullable=True)
+    psalm = Column(Text, nullable=True)
+    second_reading = Column(Text, nullable=True)
+    gospel = Column(Text, nullable=True)

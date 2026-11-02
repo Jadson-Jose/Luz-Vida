@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from datetime import date
 from pydantic import BaseModel, ConfigDict
 
 
@@ -100,3 +100,16 @@ class SearchResult(BaseModel):
     verse: VerseOut
     book_name: str
     chapter_number: int
+    
+    
+class DailyReadingOut(BaseModel):
+    id: int
+    date: date
+    liturgical_color: str | None = None
+    liturgical_season: str | None = None
+    first_reading: str | None = None
+    psalm: str | None = None
+    second_reading: str | None = None
+    gospel: str | None = None
+
+    model_config = ConfigDict(from_attributes=True)

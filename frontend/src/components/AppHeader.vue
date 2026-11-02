@@ -50,6 +50,8 @@
       <nav class="links">
         <router-link to="/">Início</router-link>
         <router-link to="/livros">Livros</router-link>
+        <!-- LINK DA LITURGIA ADICIONADO AQUI -->
+        <router-link to="/liturgia">Liturgia</router-link>
         <router-link to="/anjos">Anjos</router-link>
         <router-link to="/santos">Santos</router-link>
         <router-link to="/admin/login">Admin</router-link>

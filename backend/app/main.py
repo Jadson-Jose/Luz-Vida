@@ -5,7 +5,8 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
 from app.config import CORS_ORIGINS
-from app.routers import angels, auth, bible, saints, stats
+# 1. Adicionado o 'liturgy' na importação
+from app.routers import angels, auth, bible, saints, stats, liturgy
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -27,6 +28,8 @@ app.include_router(bible.router)
 app.include_router(angels.router)
 app.include_router(saints.router)
 app.include_router(stats.router)
+# 2. Adicionado o registro da rota da liturgia
+app.include_router(liturgy.router)
 
 
 @app.get("/")
