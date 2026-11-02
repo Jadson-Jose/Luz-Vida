@@ -35,3 +35,22 @@ def create_church_content(item: schemas.ChurchContentCreate, db: Session = Depen
     db.commit()
     db.refresh(db_item)
     return db_item
+
+@router.put("/{id}", response_model=schemas.ChurchContentOut, dependencies=[Depends(require_admin)])
+def update_church_content(id: int, updated: schemas.ChurchContentCreate, db: Session = Depends(get_db)):
+    item = db.query(models.ChurchContent).filter(models.ChurchContent.id == id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Conteúdo não encontrado.")
+    for key, value in updated.dict().items():
+        setattr(item, key, value)
+    db.commit()
+    db.refresh(item)
+    return item
+
+@router.delete("/{id}", status_code=204, dependencies=[Depends(require_admin)])
+def delete_church_content(id: int, db: Session = Depends(get_db)):
+    item = db.query(models.ChurchContent).filter(models.ChurchContent.id == id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Conteúdo não encontrado.")
+    db.delete(item)
+    db.commit()

@@ -68,6 +68,11 @@ const router = createRouter({
           name: "admin-saints",
           component: () => import("../views/admin/AdminSaintsView.vue"),
         },
+        {
+          path: "igreja",
+          name: "admin-church",
+          component: () => import("../views/admin/AdminChurchView.vue"),
+},
       ],
     },
   ],

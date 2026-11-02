@@ -7,6 +7,10 @@
         <router-link to="/admin/livros">Livros</router-link>
         <router-link to="/admin/anjos">Anjos</router-link>
         <router-link to="/admin/santos">Santos</router-link>
+        
+        <!-- LINK ADICIONADO AQUI -->
+        <router-link to="/admin/igreja">Conhecendo a Igreja</router-link>
+        
         <button @click="logout">Sair</button>
       </nav>
     </aside>
