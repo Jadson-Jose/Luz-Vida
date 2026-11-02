@@ -222,9 +222,9 @@ input:focus-visible {
   }
 
   .search-form {
-    flex: none; /* Remove o flex que está esticando */
-    min-width: 100%;
-    height: 48px; /* Altura fixa e confortável para dedos */
+    flex: none;
+    width: 100%; /* <-- AQUI ESTÁ A CORREÇÃO */
+    height: 48px;
     padding: 4px 4px 4px 16px;
     margin: 0 auto;
   }

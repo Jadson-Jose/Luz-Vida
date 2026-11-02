@@ -50,6 +50,7 @@ body {
   font-family: "EB Garamond", Georgia, serif;
   font-size: 18px;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 h1,
