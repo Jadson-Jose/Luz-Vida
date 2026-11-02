@@ -27,8 +27,8 @@
         <router-link to="/anjos">Anjos</router-link>
         <router-link to="/santos">Santos</router-link>
 
-        <!-- NOVO MENU DROPDOWN -->
-        <div class="dropdown" @mouseenter="isChurchMenuOpen = true" @mouseleave="isChurchMenuOpen = false">
+        <!-- MENU DROPDOWN CORRIGIDO -->
+        <div class="dropdown" @mouseenter="openMenu" @mouseleave="closeMenu">
           <span class="dropdown-toggle" @click="isChurchMenuOpen = !isChurchMenuOpen">
             Conhecendo a Igreja ▾
           </span>
@@ -38,7 +38,6 @@
             <router-link to="/igreja/catecismo" @click="isChurchMenuOpen = false">Catecismo</router-link>
             <router-link to="/igreja/documentos" @click="isChurchMenuOpen = false">Documentos Papais</router-link>
             <router-link to="/igreja/oracoes" @click="isChurchMenuOpen = false">Orações e Terço</router-link>
-            <!-- Você pode adicionar mais submenus aqui no futuro -->
           </div>
         </div>
       </nav>
@@ -52,7 +51,19 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 const searchQuery = ref("");
-const isChurchMenuOpen = ref(false); // Controla a abertura do menu
+const isChurchMenuOpen = ref(false);
+let closeTimeout = null; 
+
+const openMenu = () => {
+  if (closeTimeout) clearTimeout(closeTimeout);
+  isChurchMenuOpen.value = true;
+};
+
+const closeMenu = () => {
+  closeTimeout = setTimeout(() => {
+    isChurchMenuOpen.value = false;
+  }, 300); // 300ms de tolerância
+};
 
 function handleSearch() {
   const q = searchQuery.value.trim();
@@ -183,7 +194,7 @@ nav.links a:hover, .dropdown-toggle:hover {
   border-color: var(--wine);
 }
 
-/* --- ESTILOS DO DROPDOWN --- */
+/* --- ESTILOS DO DROPDOWN CORRIGIDOS --- */
 .dropdown {
   position: relative;
   display: inline-block;
@@ -199,11 +210,11 @@ nav.links a:hover, .dropdown-toggle:hover {
   border-radius: 4px;
   min-width: 220px;
   box-shadow: var(--shadow);
-  padding: 10px 0;
+  padding: 1.5rem 0 1rem 0; /* CORREÇÃO: O padding-top cobre o espaço vazio */
   z-index: 100;
   display: flex;
   flex-direction: column;
-  margin-top: 10px;
+  /* CORREÇÃO: Removido o margin-top */
 }
 
 .dropdown-menu a {
@@ -257,7 +268,6 @@ nav.links a:hover, .dropdown-toggle:hover {
     font-size: 0.75rem;
   }
 
-  /* Ajuste para o dropdown no celular (aparece relativo, empurrando o conteúdo para baixo) */
   .dropdown-menu {
     position: static;
     transform: none;
