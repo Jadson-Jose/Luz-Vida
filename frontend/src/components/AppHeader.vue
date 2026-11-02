@@ -3,46 +3,19 @@
     <div class="nav-wrap">
       <router-link to="/" class="brand">
         <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle
-            cx="20"
-            cy="20"
-            r="18"
-            stroke="var(--gold)"
-            stroke-width="1.4"
-          />
-          <path
-            d="M20 8V32M12 15H28"
-            stroke="var(--wine)"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
+          <circle cx="20" cy="20" r="18" stroke="var(--gold)" stroke-width="1.4"/>
+          <path d="M20 8V32M12 15H28" stroke="var(--wine)" stroke-width="2" stroke-linecap="round"/>
           <path d="M20 8L22 12H18L20 8Z" fill="var(--gold)" />
         </svg>
         Ecclesia
       </router-link>
 
       <form class="search-form" @submit.prevent="handleSearch">
-        <input
-          type="text"
-          v-model="searchQuery"
-          placeholder="Buscar na Bíblia…"
-          aria-label="Buscar"
-        />
+        <input type="text" v-model="searchQuery" placeholder="Buscar na Bíblia…" aria-label="Buscar" />
         <button type="submit" aria-label="Pesquisar">
           <svg viewBox="0 0 24 24" fill="none">
-            <circle
-              cx="11"
-              cy="11"
-              r="7"
-              stroke="currentColor"
-              stroke-width="2"
-            />
-            <path
-              d="M21 21L16.65 16.65"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
+            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
+            <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
           </svg>
         </button>
       </form>
@@ -50,11 +23,24 @@
       <nav class="links">
         <router-link to="/">Início</router-link>
         <router-link to="/livros">Livros</router-link>
-        <!-- LINK DA LITURGIA ADICIONADO AQUI -->
         <router-link to="/liturgia">Liturgia</router-link>
         <router-link to="/anjos">Anjos</router-link>
         <router-link to="/santos">Santos</router-link>
-        <router-link to="/admin/login">Admin</router-link>
+
+        <!-- NOVO MENU DROPDOWN -->
+        <div class="dropdown" @mouseenter="isChurchMenuOpen = true" @mouseleave="isChurchMenuOpen = false">
+          <span class="dropdown-toggle" @click="isChurchMenuOpen = !isChurchMenuOpen">
+            Conhecendo a Igreja ▾
+          </span>
+          
+          <div class="dropdown-menu" v-show="isChurchMenuOpen">
+            <router-link to="/igreja/historia" @click="isChurchMenuOpen = false">História da Igreja</router-link>
+            <router-link to="/igreja/catecismo" @click="isChurchMenuOpen = false">Catecismo</router-link>
+            <router-link to="/igreja/documentos" @click="isChurchMenuOpen = false">Documentos Papais</router-link>
+            <router-link to="/igreja/oracoes" @click="isChurchMenuOpen = false">Orações e Terço</router-link>
+            <!-- Você pode adicionar mais submenus aqui no futuro -->
+          </div>
+        </div>
       </nav>
     </div>
   </header>
@@ -66,10 +52,10 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 const searchQuery = ref("");
+const isChurchMenuOpen = ref(false); // Controla a abertura do menu
 
 function handleSearch() {
   const q = searchQuery.value.trim();
-  console.log("Busca submetida:", q);
   if (q) {
     router.push({ name: "search", query: { q } });
   } else {
@@ -124,9 +110,7 @@ header {
   border-radius: 999px;
   padding: 8px 8px 8px 18px;
   min-width: 220px;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .search-form:focus-within {
@@ -161,9 +145,7 @@ header {
   justify-content: center;
   cursor: pointer;
   flex: none;
-  transition:
-    background 0.2s,
-    transform 0.2s;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .search-form button:hover {
@@ -182,7 +164,7 @@ nav.links {
   align-items: center;
 }
 
-nav.links a {
+nav.links a, .dropdown-toggle {
   font-family: "Cinzel", serif;
   font-size: 0.78rem;
   letter-spacing: 0.1em;
@@ -191,22 +173,52 @@ nav.links a {
   color: var(--ink-soft);
   padding-bottom: 3px;
   border-bottom: 1px solid transparent;
-  transition:
-    color 0.2s,
-    border-color 0.2s;
+  transition: color 0.2s, border-color 0.2s;
+  cursor: pointer;
+  user-select: none;
 }
 
-nav.links a:hover,
-nav.links a:focus-visible {
+nav.links a:hover, .dropdown-toggle:hover {
   color: var(--wine);
   border-color: var(--wine);
 }
 
-a:focus-visible,
-button:focus-visible,
-input:focus-visible {
-  outline: 3px solid var(--gold);
-  outline-offset: 2px;
+/* --- ESTILOS DO DROPDOWN --- */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--parchment);
+  border: 1px solid var(--parchment-line);
+  border-radius: 4px;
+  min-width: 220px;
+  box-shadow: var(--shadow);
+  padding: 10px 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.dropdown-menu a {
+  padding: 10px 20px;
+  font-size: 0.8rem;
+  text-align: left;
+  border-bottom: none;
+  color: var(--ink);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.dropdown-menu a:hover {
+  background: var(--parchment-deep);
+  color: var(--wine);
 }
 
 @media (max-width: 880px) {
@@ -223,7 +235,7 @@ input:focus-visible {
 
   .search-form {
     flex: none;
-    width: 100%; /* <-- AQUI ESTÁ A CORREÇÃO */
+    width: 100%;
     height: 48px;
     padding: 4px 4px 4px 16px;
     margin: 0 auto;
@@ -243,6 +255,22 @@ input:focus-visible {
     flex-wrap: wrap;
     gap: 12px;
     font-size: 0.75rem;
+  }
+
+  /* Ajuste para o dropdown no celular (aparece relativo, empurrando o conteúdo para baixo) */
+  .dropdown-menu {
+    position: static;
+    transform: none;
+    box-shadow: none;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin-top: 5px;
+    width: 100%;
+  }
+  .dropdown-menu a {
+    text-align: center;
+    padding: 5px;
   }
 }
 </style>
