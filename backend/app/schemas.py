@@ -115,17 +115,17 @@ class DailyReadingOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ChurchContentOut(BaseModel):
-    id: int
-    category: str
-    title: str
-    content: str
-    order: int
-
-    model_config = ConfigDict(from_attributes=True)
-
-class ChurchContentCreate(BaseModel):
+# ========== Conhecendo a Igreja ==========
+class ChurchContentBase(BaseModel):
     category: str
     title: str
     content: str
     order: int = 0
+
+class ChurchContentCreate(ChurchContentBase):
+    pass
+
+class ChurchContentOut(ChurchContentBase):
+    id: int
+    slug: str
+    model_config = ConfigDict(from_attributes=True)

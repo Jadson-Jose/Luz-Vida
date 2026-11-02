@@ -1,6 +1,6 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, String, Text, Date
+from sqlalchemy import Column, Integer, String, Text, Date, Boolean
 from app.database import Base
 
 
@@ -75,11 +75,13 @@ class DailyReading(Base):
     second_reading = Column(Text, nullable=True)
     gospel = Column(Text, nullable=True)
     
+
 class ChurchContent(Base):
     __tablename__ = "church_contents"
 
     id = Column(Integer, primary_key=True, index=True)
-    category = Column(String, index=True, nullable=False) # ex: historia, catecismo, oracoes
+    category = Column(String, index=True, nullable=False)
     title = Column(String, nullable=False)
+    slug = Column(String, unique=True, index=True, nullable=True) # <-- NOVO CAMPO
     content = Column(Text, nullable=False)
-    order = Column(Integer, default=0) # Para ordenar a exibição na tela
+    order = Column(Integer, default=0)
