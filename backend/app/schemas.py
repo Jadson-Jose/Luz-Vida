@@ -113,3 +113,19 @@ class DailyReadingOut(BaseModel):
     gospel: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ChurchContentOut(BaseModel):
+    id: int
+    category: str
+    title: str
+    content: str
+    order: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+class ChurchContentCreate(BaseModel):
+    category: str
+    title: str
+    content: str
+    order: int = 0

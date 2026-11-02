@@ -11,6 +11,7 @@ import AdminDashboardView from "../views/admin/AdminDashboardView.vue";
 import SaintsView from "../views/SaintsView.vue";
 import SaintDetailView from "../views/SaintDetailView.vue";
 import LiturgyView from '../views/LiturgyView.vue'
+import ChurchView from '../views/ChurchView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,6 +26,8 @@ const router = createRouter({
     { path: "/santos", name: "saints", component: SaintsView },
     { path: "/santos/:id", name: "saint-detail", component: SaintDetailView },
     { path: "/liturgia", name: "liturgy", component: LiturgyView },
+    { path: "/igreja/:category", name: "church-category", component: ChurchView },
+    { path: "/igreja/:category/:id", name: "church-topic", component: ChurchView },
     {
       path: "/busca",
       name: "search",

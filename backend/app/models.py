@@ -74,3 +74,12 @@ class DailyReading(Base):
     psalm = Column(Text, nullable=True)
     second_reading = Column(Text, nullable=True)
     gospel = Column(Text, nullable=True)
+    
+class ChurchContent(Base):
+    __tablename__ = "church_contents"
+
+    id = Column(Integer, primary_key=True, index=True)
+    category = Column(String, index=True, nullable=False) # ex: historia, catecismo, oracoes
+    title = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    order = Column(Integer, default=0) # Para ordenar a exibição na tela
