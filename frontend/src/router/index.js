@@ -27,7 +27,7 @@ const router = createRouter({
     { path: "/santos/:id", name: "saint-detail", component: SaintDetailView },
     { path: "/liturgia", name: "liturgy", component: LiturgyView },
     { path: "/igreja/:category", name: "church-category", component: ChurchView },
-    { path: "/igreja/:category/:id", name: "church-topic", component: ChurchView },
+    { path: "/igreja/:category/:slug", name: "church-topic", component: ChurchView },
     {
       path: "/busca",
       name: "search",

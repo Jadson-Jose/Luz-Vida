@@ -10,7 +10,7 @@
       <router-link 
         v-for="topic in topics" 
         :key="topic.id" 
-        :to="`/igreja/${category}/${topic.id}`"
+        :to="`/igreja/${category}/${topic.slug}`"
         class="topic-card card"
       >
         <h3>{{ topic.title }}</h3>
@@ -46,7 +46,7 @@ const selectedTopic = ref(null)
 const loading = ref(true)
 
 const category = computed(() => route.params.category || '')
-const topicId = computed(() => route.params.id || null)
+const slug = computed(() => route.params.slug || null) // <-- Lê o slug
 
 const currentCategoryName = computed(() => {
   const names = {
@@ -70,8 +70,8 @@ const formattedContent = computed(() => {
 async function loadContent() {
   loading.value = true
   try {
-    if (topicId.value) {
-      const res = await api.get(`church/topic/${topicId.value}`)
+    if (slug.value) {
+      const res = await api.get(`church/topic/${slug.value}`) // <-- Busca pelo slug
       selectedTopic.value = res.data
       topics.value = [] 
     } else if (category.value) {
